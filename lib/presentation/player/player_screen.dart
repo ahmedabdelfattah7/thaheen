@@ -268,10 +268,17 @@ class _NextLessonButton extends StatelessWidget {
     final next = ProgressRules.nextLesson(course, lesson.id);
 
     if (next == null) {
-      return OutlinedButton.icon(
-        onPressed: () => context.go(AppRoutes.course(course.id)),
-        icon: const Icon(Icons.flag_outlined),
-        label: Text('${l10n.lastLesson} · ${l10n.backToCourse}'),
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(l10n.lastLesson, textAlign: TextAlign.center),
+          const SizedBox(height: 8),
+          OutlinedButton.icon(
+            onPressed: () => context.go(AppRoutes.course(course.id)),
+            icon: const Icon(Icons.flag_outlined),
+            label: Text(l10n.backToCourse),
+          ),
+        ],
       );
     }
 

@@ -94,7 +94,11 @@ class _CourseOutline extends StatelessWidget {
               ),
               if (course.description.isNotEmpty) ...[
                 const SizedBox(height: 12),
-                Text(course.description, style: theme.textTheme.bodyMedium),
+                Text(
+                  // Isolated so Arabic punctuation stays put in the English UI.
+                  bidiIsolate(course.description),
+                  style: theme.textTheme.bodyMedium,
+                ),
               ],
               if (total > 0) ...[
                 const SizedBox(height: 16),

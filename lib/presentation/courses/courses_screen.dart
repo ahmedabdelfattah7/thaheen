@@ -72,7 +72,7 @@ class _CourseList extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: TextField(
             onChanged: context.read<CoursesCubit>().search,
             textInputAction: TextInputAction.search,
@@ -91,7 +91,7 @@ class _CourseList extends StatelessWidget {
                   ),
                 )
               : ListView(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                  padding: const EdgeInsetsDirectional.fromSTEB(16, 8, 16, 24),
                   children: [
                     if (continueItem != null) ...[
                       Text(
