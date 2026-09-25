@@ -1,150 +1,172 @@
-# Thaheen: Mini Offline LMS
+Thaheen — Mini Offline LMS
 
-An Arabic-first student app built for the Thaheen Flutter screening task. You browse courses, open a course, and watch lessons one by one. Progress, notes and settings survive app restarts. Everything is bundled, and there are no network calls.
+An Arabic-first, fully offline Flutter LMS built for the Thaheen screening task.
 
-| Courses (AR) | Course details (AR) | Player (AR) | English + dark | Broken video |
-|---|---|---|---|---|
-| ![](docs/screenshots/courses_ar.png) | ![](docs/screenshots/details_ar.png) | ![](docs/screenshots/player_ar.png) | ![](docs/screenshots/courses_en_dark.png) | ![](docs/screenshots/video_error_en_dark.png) |
+Students can browse courses, open lessons, watch videos, save notes, and resume their progress after restarting the app.
 
-## How to run
+Courses	Course Details	Player	English + Dark	Video Error
+				
 
-Flutter 3.47 (stable) / Dart 3.13.
+Run
 
-```bash
+Flutter 3.47 stable / Dart 3.13
+
 flutter pub get
-flutter run            # Android or iOS device/simulator
-flutter test           # 37 unit + widget tests
+flutter run
+flutter test
 flutter build apk --release
-```
 
-The demo videos and thumbnails are committed. `python3 tool/generate_demo_media.py` regenerates them (needs `opencv-python`).
+Demo videos and thumbnails are bundled with the app.
 
-## Features
+Features
 
-**Required.** Every item is implemented:
-- **Courses list:** thumbnail, title, instructor, lesson count and progress %, plus a "Continue watching" card for the most recent unfinished lesson.
-- **Course details:** sections and lessons with durations, a not started / in progress / completed status per lesson, and sequential unlock. Tapping a locked lesson shows a friendly message.
-- **Player:**
-  - play/pause, a seek bar, current time and duration, and speed 1x / 1.25x / 1.5x / 2x
-  - fullscreen: the button or rotating the phone
-  - resumes from the last position
-  - auto-completes at 90%, and "Next lesson" respects the unlock rule
-- **Persistence:** positions, completion, notes, theme, language and the last speed all survive a restart.
-- **Arabic-first RTL UI** with the bundled Tajawal font (Arabic + Latin), and loading, empty and error states throughout, with no red screens.
+* Course list with progress and Continue Watching
+* Course sections and sequential lesson unlocking
+* Video playback with:
+    * Play / pause
+    * Seek bar
+    * Playback speed: 1x–2x
+    * Resume from saved position
+    * Fullscreen + orientation support
+* Automatic completion at 90%
+* Persistent progress, notes, settings, language and playback speed
+* Arabic-first RTL UI with bundled Tajawal font
+* Arabic / English course content
+* Light / dark mode
+* Course search
+* Loading, empty and error states
+* Fully offline — no network calls
 
-**Bonus:** dark mode, an Arabic/English switch (UI and course content), course search, per-lesson notes, remembered playback speed and widget tests.
+Architecture
 
-## Architecture
-
-```
 lib/
-  core/          theme, localization (ARB), router, formatters, loading/empty/error views
-  domain/        plain Dart models + ProgressRules (all learning rules, no Flutter)
-  data/          repositories: bundled JSON catalog, SharedPreferences storage
-  presentation/  one folder per screen: cubit(s) + widgets
-```
+├── core/           # Theme, localization, router, shared UI
+├── domain/         # Models + learning rules
+├── data/           # JSON catalog + SharedPreferences
+└── presentation/   # Screens, Cubits and widgets
 
-Dependencies point one way: `presentation → data → domain`. I kept it deliberately lean.
-- **No use-case classes.** With one repository per concern, they would only forward calls.
-- **The real logic is one pure class,** `domain/progress_rules.dart`. It covers the 90% rule, unlock, course %, resume, continue-watching and next lesson, and it's the most heavily tested part.
-- **DI** is plain `RepositoryProvider`. Repositories are created once in `main.dart`, with no service locator.
-- **Logging:** `AppBlocObserver` (`core/bloc/`) prints each cubit's lifecycle and state changes in debug builds. Cubits report failures with `addError`, so every error is logged in one place.
-- **Widgets are stateless,** one public widget per file. Screen state lives in the cubits, including player UI state (fullscreen, control visibility, the seek-bar drag position). Derived data like course %, lesson status and lock state comes from getters on `CoursesState`, so widgets only render.
+Flow:
 
-### State management: Cubit (flutter_bloc)
+Presentation → Data → Domain
 
-| Cubit | Scope | Responsibility |
-|---|---|---|
-| `SettingsCubit` | app | theme mode + language |
-| `CoursesCubit` | app | catalog (loading / loaded / failure), saved progress, search query |
-| `PlayerCubit` | one lesson | video lifecycle, speed, 90% completion, saving progress, fullscreen, on-screen controls |
-| `NotesCubit` | one lesson | the lesson note, saved after typing stops |
+State Management
 
-- **Why Cubit:** the state changes are simple and explicit. A Cubit is easy to read and easy to test without the extra event classes Bloc would add.
-- **How screens stay in sync:** the player saves through `ProgressRepository`, which exposes a `changes` stream. `CoursesCubit` listens to it, so the list and details update as soon as a lesson completes, and cubits never call each other.
-- **Playback position** changes about 10 times per second. The seek bar reads it straight from the `VideoPlayerController` (`ValueListenableBuilder`), and the cubit only emits coarse changes, so the whole screen doesn't rebuild on every tick.
+Using Cubit (flutter_bloc):
 
-### Local storage: SharedPreferences
+Cubit	Responsibility
+SettingsCubit	Theme and language
+CoursesCubit	Catalog, progress and search
+PlayerCubit	Playback, progress, speed and fullscreen
+NotesCubit	Lesson notes
 
-- **Why it fits:** the data is tiny key-value data (a few dozen lessons), and the package is maintained by the Flutter team. It needs no code generation or adapters, and reads are synchronous after startup.
-- **Layout:** progress is one versioned JSON map (`progress.v1`), and notes and settings are single keys.
-- **Corrupt data:** if stored data is corrupt, the app starts fresh instead of crashing.
-- **When to switch:** Hive/Isar/sqflite would pay off with hundreds of records or real queries. The repositories are the only code that would change.
+Screens are kept as StatelessWidget where possible. UI state and business logic live in Cubits.
 
-## Learning rules
+The main learning rules are centralized in the pure:
 
-- **Completion:** position ≥ 90% of the *real* video duration (reported by the decoder, not `durationSec`). Once a lesson is completed it stays completed, even if it's rewatched.
-- **Unlock:** the first lesson is open. Every other lesson needs the previous lesson in watch order completed, including across section boundaries.
-- **Course progress** = completed lessons ÷ all lessons. An empty course is 0%, not NaN.
-- **Resume:** playback starts at the last saved position, or at 0 if the student was within the last 3 seconds.
-- **When progress is saved:**
-  - every 5 s of playback
-  - when playback pauses (including when the app goes to the background, because the player auto-pauses)
-  - when leaving the lesson
-  - immediately when a lesson completes
+domain/progress_rules.dart
 
-## Data shape
+It handles completion, unlocking, course progress, resume position, continue watching and next lesson logic.
 
-I kept the suggested shape with two additions:
-- **Bilingual content:** every text field (course title, instructor, description, section and lesson titles) is `{ "ar": …, "en": … }`, so the English switch translates the courses too. A plain string (the original shape) still works and counts as Arabic. A missing English translation falls back to Arabic.
-- An optional `description` per course.
+Dependency Injection
 
-Other notes:
-- Lesson ids are only unique inside a course (`l1` exists in both courses), so progress is keyed by `courseId/lessonId`.
-- `durationSec` is display metadata only.
-- **Deliberate demo edge cases:**
-  - a third "coming soon" course with no lessons (the empty state), which also has no thumbnail (the placeholder)
-  - the last pharmacology lesson points to an intentionally corrupt mp4 (the error state). It's the *last* lesson on purpose, so it doesn't block the unlock chain.
-- **Videos:** 20–40 s silent H.264 clips with a big running timer, which makes "resume from last position" easy to verify. I generated them myself, so they're royalty-free and each is under 1 MB.
+Uses RepositoryProvider with repositories created once in main.dart.
 
-## RTL and Arabic UX
+No service locator and no unnecessary use-case classes.
 
-- **Direction:** Arabic is the default locale, and the whole layout mirrors. Paddings use `EdgeInsetsDirectional` / `PositionedDirectional`. The back arrow, chevrons and the "Next lesson" arrow are direction-aware icons that flip automatically.
-- **Seek bar:** it's a Material `Slider`, which mirrors both its painting and its drag math. In Arabic the bar fills right-to-left, and the current time sits on the right (the start).
-  - Platform guidance differs here. Apple's HIG says to flip progress controls in RTL, while Material keeps media timelines LTR.
-  - For an Arabic-first product I followed reading direction, and kept fill, dragging, tapping and time labels consistent with each other.
-  - Play/pause glyphs are never mirrored.
-- **Arabic plurals** via ICU: درس واحد، درسان، 3 دروس، 11 درسًا.
-- **Mixed-script text:** content shown inside UI strings (names, titles) is wrapped in Unicode isolates (FSI/PDI). If a translation is missing and Arabic appears in the English UI, `د. سارة · 4 lessons` still reads correctly instead of reordering.
-- **Digits:** Western digits in both languages, matching the `intl` `ar` locale.
+Persistence
 
-## States and errors
+Uses SharedPreferences for:
 
-- **Catalog missing or corrupt:** an error view with retry.
-- **Nothing to show:** an empty catalog, an empty course and no search results each get an empty view.
-- **Video missing, corrupt or unsupported,** or a 15 s load timeout: a friendly error with retry.
-  - Saves never overwrite progress with the zeroed position an errored player reports.
-  - The controller is never awaited on dispose, because the platform can leave that future pending forever.
-- **Missing thumbnail:** a placeholder.
-- **Any unexpected build error:** a calm fallback widget (`ErrorWidget.builder`) instead of the red screen.
+* Lesson progress
+* Completion state
+* Notes
+* Theme
+* Language
+* Playback speed
 
-## Tests
+Progress is stored as a versioned JSON map.
 
-`flutter test` runs 37 tests.
-- **Unit tests:**
-  - `ProgressRules`: the 90% boundary, unknown duration, unlock (including across sections), course % (including an empty course), status, resume at the end, continue-watching
-  - repositories: progress survives a restart (a new instance on the same storage), completion is sticky, corrupt storage, corrupt or invalid catalog
-- **Widget tests** run the real app with in-memory storage:
-  - Arabic list, continue-watching card, search, corrupt-catalog error, AR→EN flips to LTR
-  - locked-lesson message, unlock after completion, empty course
-  - an unplayable video shows an error (no red screen), and Next lesson is gated until completion
+Corrupt local data is handled gracefully by starting with clean state instead of crashing.
 
-## Trade-offs and known issues
+Learning Rules
 
-- **Seeking past 90% counts as completion,** because the rule is position-based. A stricter version would track watched segments.
-- **Fullscreen orientation:** exiting fullscreen with the button locks portrait until you leave the player. Re-enabling auto-rotate would flip straight back while the phone is still sideways.
-- **Screen sleep on Android:** the screen isn't kept awake during playback (no wakelock package).
-- **Search** is a plain "contains" match in both languages, with no Arabic letter normalization (e.g. أ/ا).
-- **go_router is pinned to 17.x.** 18.x moved to the new `material_ui` package, whose `MaterialApp` type differs from `package:flutter/material.dart`'s, so go_router's Material page detection fails.
-- **Media:** the demo clips are silent.
+* A lesson is completed at ≥90% of the real video duration.
+* Completed lessons remain completed even when rewatched.
+* Lessons unlock sequentially, including across sections.
+* Course progress = completed lessons / total lessons.
+* Resume starts from the saved position.
+* Progress is saved every 5 seconds, on pause, when leaving the lesson, and immediately on completion.
 
-## With more time
+Arabic & RTL
 
-- Completion based on watched segments, so skipping ahead can't complete a lesson.
-- Arabic search normalization (أ/إ/آ → ا, ة → ه).
-- A wakelock during playback, double-tap ±10 s, and captions.
-- Integration tests on a real device, golden tests for RTL layouts, and CI (analyze + test).
+* Arabic is the default language.
+* Full RTL layout using directional Flutter APIs.
+* Tajawal is bundled for Arabic and Latin text.
+* Arabic/English course content.
+* Direction-aware navigation icons.
+* ICU Arabic pluralization.
+* Unicode isolates for mixed Arabic/English text.
 
-## Time spent
+Error Handling
 
-About **_X_ hours** (fill in).
+The app handles:
+
+* Missing/corrupt catalog
+* Empty courses
+* No search results
+* Missing thumbnails
+* Missing/corrupt/unsupported videos
+* Video loading timeout
+* Corrupt local storage
+
+Unexpected Flutter build errors also use a custom fallback instead of showing a red screen.
+
+Tests
+
+37 tests covering:
+
+* ProgressRules
+* Unlock and completion rules
+* Course progress
+* Resume behavior
+* Continue Watching
+* Repository persistence
+* Corrupt storage/catalog
+* Arabic/English UI
+* Search
+* Locked lessons
+* Empty states
+* Video errors
+* Next-lesson gating
+
+Demo Edge Cases
+
+The demo includes:
+
+* A course with no lessons → empty state
+* A course without a thumbnail → placeholder
+* An intentionally corrupt final video → video error state
+
+The videos are short, silent H.264 clips generated specifically for the demo.
+
+Trade-offs
+
+* Completion is position-based, so seeking past 90% completes a lesson.
+* Search does not normalize Arabic characters such as أ / إ / آ.
+* No wakelock during playback.
+* Demo videos are silent.
+* Integration and golden tests are not included yet.
+* go_router is pinned to 17.x due to compatibility with the current Material setup.
+
+With More Time
+
+* Watched-segment completion instead of position-based completion
+* Arabic search normalization
+* Wakelock during playback
+* Captions and ±10 second seeking
+* Integration tests and RTL golden tests
+* CI with analyze + test
+
+Time Spent
+
+About X hours.
