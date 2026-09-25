@@ -1,19 +1,7 @@
-import 'dart:convert';
-
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:thaheen/data/course_repository.dart';
 
-/// Serves a fixed string as the catalog file.
-class FakeBundle extends CachingAssetBundle {
-  FakeBundle(this.catalog);
-
-  final String catalog;
-
-  @override
-  Future<ByteData> load(String key) async =>
-      ByteData.sublistView(Uint8List.fromList(utf8.encode(catalog)));
-}
+import '../helpers/test_app.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
