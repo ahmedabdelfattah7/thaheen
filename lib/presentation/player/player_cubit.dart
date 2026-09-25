@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:video_player/video_player.dart';
@@ -70,11 +69,12 @@ class PlayerCubit extends Cubit<PlayerState> {
     _controller = controller;
     try {
       await controller.initialize().timeout(_loadTimeout);
-    } catch (error) {
+    } catch (error, stackTrace) {
       // Missing or corrupt file, or an unsupported format.
-      debugPrint('Could not open ${lesson.video}: $error');
       _disposeController();
-      if (!isClosed) emit(state.copyWith(status: PlayerStatus.failure));
+      if (isClosed) return;
+      addError(error, stackTrace);
+      emit(state.copyWith(status: PlayerStatus.failure));
       return;
     }
     if (isClosed) return;
@@ -166,7 +166,7 @@ class PlayerCubit extends Cubit<PlayerState> {
     if (value == null || isClosed) return;
 
     if (value.hasError) {
-      debugPrint('Playback error: ${value.errorDescription}');
+      addError(value.errorDescription ?? 'Playback error', StackTrace.current);
       _controller?.removeListener(_onPlayerUpdate);
       unawaited(_saveProgress());
       emit(state.copyWith(status: PlayerStatus.failure));

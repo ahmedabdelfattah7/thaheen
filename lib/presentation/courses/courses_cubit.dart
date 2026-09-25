@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../data/course_repository.dart';
@@ -28,9 +27,9 @@ class CoursesCubit extends Cubit<CoursesState> {
     try {
       final courses = await _courses.getCourses();
       emit(state.copyWith(status: CoursesStatus.loaded, courses: courses));
-    } catch (error) {
+    } catch (error, stackTrace) {
       // Missing file, invalid JSON or a wrong field type: show a retry.
-      debugPrint('Could not load courses: $error');
+      addError(error, stackTrace);
       emit(state.copyWith(status: CoursesStatus.failure));
     }
   }

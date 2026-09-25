@@ -48,6 +48,7 @@ Dependencies point one way: `presentation → data → domain`. I kept it delibe
 - **No use-case classes.** With one repository per concern, they would only forward calls.
 - **The real logic is one pure class,** `domain/progress_rules.dart`. It covers the 90% rule, unlock, course %, resume, continue-watching and next lesson, and it's the most heavily tested part.
 - **DI** is plain `RepositoryProvider`. Repositories are created once in `main.dart`, with no service locator.
+- **Logging:** `AppBlocObserver` (`core/bloc/`) prints each cubit's lifecycle and state changes in debug builds. Cubits report failures with `addError`, so every error is logged in one place.
 - **Widgets are stateless,** one public widget per file. Screen state lives in the cubits, including player UI state (fullscreen, control visibility, the seek-bar drag position). Derived data like course %, lesson status and lock state comes from getters on `CoursesState`, so widgets only render.
 
 ### State management: Cubit (flutter_bloc)

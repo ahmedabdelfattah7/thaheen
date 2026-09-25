@@ -68,4 +68,10 @@ class CoursesState {
     progress: progress ?? this.progress,
     query: query ?? this.query,
   );
+
+  /// Short summary for the bloc observer log.
+  @override
+  String toString() =>
+      'CoursesState(${status.name}, courses: ${courses.length}, '
+      'progress: ${progress.length}, query: "$query")';
 }

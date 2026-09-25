@@ -41,4 +41,11 @@ class PlayerState {
     controlsVisible: controlsVisible ?? this.controlsVisible,
     seekPreview: clearSeekPreview ? null : seekPreview ?? this.seekPreview,
   );
+
+  /// Short summary for the bloc observer log.
+  @override
+  String toString() =>
+      'PlayerState(${status.name}, speed: $speed, completed: $isCompleted, '
+      'fullscreen: $isFullscreen, controls: $controlsVisible, '
+      'seekPreview: $seekPreview)';
 }
