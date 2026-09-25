@@ -5,6 +5,9 @@ abstract final class AppTheme {
   // Calm teal for a health-sciences brand.
   static const _seed = Color(0xFF0E7C7B);
 
+  /// Bundled in assets/fonts; covers both Arabic and Latin.
+  static const fontFamily = 'Tajawal';
+
   static ThemeData light() => _build(Brightness.light);
 
   static ThemeData dark() => _build(Brightness.dark);
@@ -15,6 +18,7 @@ abstract final class AppTheme {
       brightness: brightness,
     );
     return ThemeData(
+      fontFamily: fontFamily,
       colorScheme: colors,
       scaffoldBackgroundColor: colors.surface,
       appBarTheme: AppBarTheme(
