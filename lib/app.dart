@@ -43,7 +43,6 @@ class _ThaheenAppState extends State<ThaheenApp> {
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
-        RepositoryProvider.value(value: widget.courseRepository),
         RepositoryProvider.value(value: widget.progressRepository),
         RepositoryProvider.value(value: widget.notesRepository),
         RepositoryProvider.value(value: widget.settingsRepository),

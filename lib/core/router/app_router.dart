@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../presentation/course_details/course_details_screen.dart';
 import '../../presentation/courses/courses_screen.dart';
+import '../../presentation/player/player_screen.dart';
 import '../l10n/l10n.dart';
 import '../widgets/state_views.dart';
 
@@ -23,6 +24,15 @@ GoRouter createRouter() => GoRouter(
           path: 'courses/:courseId',
           builder: (context, state) =>
               CourseDetailsScreen(courseId: state.pathParameters['courseId']!),
+          routes: [
+            GoRoute(
+              path: 'lessons/:lessonId',
+              builder: (context, state) => PlayerScreen(
+                courseId: state.pathParameters['courseId']!,
+                lessonId: state.pathParameters['lessonId']!,
+              ),
+            ),
+          ],
         ),
       ],
     ),

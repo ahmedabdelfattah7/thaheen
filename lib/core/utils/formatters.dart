@@ -15,3 +15,8 @@ String formatDuration(Duration duration) {
 /// Formats a 0.0–1.0 [value] as a locale-aware percentage, e.g. `75%`.
 String formatPercent(double value, String locale) =>
     NumberFormat.percentPattern(locale).format(value);
+
+/// Wraps [text] in Unicode isolate marks (FSI ... PDI) so text in another
+/// script can't reorder what's around it, e.g. an Arabic name followed by
+/// "4 lessons" in the English UI.
+String bidiIsolate(String text) => '\u2068$text\u2069';

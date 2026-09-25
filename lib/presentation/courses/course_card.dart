@@ -42,7 +42,8 @@ class CourseCard extends StatelessWidget {
                   Text(course.title, style: theme.textTheme.titleMedium),
                   const SizedBox(height: 4),
                   Text(
-                    '${course.instructor} · ${l10n.lessonsCount(course.lessons.length)}',
+                    '${bidiIsolate(course.instructor)} · '
+                    '${l10n.lessonsCount(course.lessons.length)}',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),

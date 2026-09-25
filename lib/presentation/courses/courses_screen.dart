@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/l10n/l10n.dart';
 import '../../core/router/app_router.dart';
+import '../../core/utils/formatters.dart';
 import '../../core/widgets/state_views.dart';
 import '../../domain/progress_rules.dart';
 import '../settings/settings_cubit.dart';
@@ -85,7 +86,9 @@ class _CourseList extends StatelessWidget {
           child: courses.isEmpty
               ? EmptyView(
                   icon: Icons.search_off,
-                  message: l10n.noSearchResults(state.query.trim()),
+                  message: l10n.noSearchResults(
+                    bidiIsolate(state.query.trim()),
+                  ),
                 )
               : ListView(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),

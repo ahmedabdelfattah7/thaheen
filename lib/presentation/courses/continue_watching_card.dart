@@ -54,7 +54,8 @@ class ContinueWatchingCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '${item.course.title} · ${formatDuration(progress.position)}',
+                      '${bidiIsolate(item.course.title)} · '
+                      '${formatDuration(progress.position)}',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.bodySmall?.copyWith(
