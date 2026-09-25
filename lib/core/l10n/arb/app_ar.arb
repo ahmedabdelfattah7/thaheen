@@ -1,0 +1,70 @@
+{
+  "@@locale": "ar",
+
+  "appTitle": "Thaheen",
+  "myCourses": "دوراتي",
+  "searchHint": "ابحث عن دورة أو مُحاضر",
+  "continueWatching": "تابع المشاهدة",
+  "resume": "استئناف",
+
+  "lessonsCount": "{count, plural, =0{لا توجد دروس} =1{درس واحد} =2{درسان} few{{count} دروس} many{{count} درسًا} other{{count} درس}}",
+  "@lessonsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "percentComplete": "{percent} مكتمل",
+  "@percentComplete": {
+    "placeholders": {
+      "percent": { "type": "String" }
+    }
+  },
+
+  "completedOfTotal": "أكملت {completed} من {total}",
+  "@completedOfTotal": {
+    "placeholders": {
+      "completed": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+
+  "noCourses": "لا توجد دورات حاليًا",
+  "noSearchResults": "لا توجد نتائج لـ «{query}»",
+  "@noSearchResults": {
+    "placeholders": {
+      "query": { "type": "String" }
+    }
+  },
+  "loadCoursesError": "تعذّر تحميل الدورات",
+  "retry": "إعادة المحاولة",
+
+  "courseNotFound": "الدورة غير موجودة",
+  "emptyCourse": "لا توجد دروس في هذه الدورة بعد",
+  "statusNotStarted": "لم يبدأ",
+  "statusInProgress": "قيد المشاهدة",
+  "statusCompleted": "مكتمل",
+  "statusLocked": "مقفل",
+  "lockedLessonMessage": "هذا الدرس مقفل. أكمل الدرس السابق أولًا لفتحه.",
+
+  "lessonNotFound": "الدرس غير موجود",
+  "videoError": "تعذّر تشغيل هذا الفيديو",
+  "videoErrorHint": "قد يكون الملف مفقودًا أو تالفًا.",
+  "playbackSpeed": "سرعة التشغيل",
+  "play": "تشغيل",
+  "pause": "إيقاف مؤقت",
+  "enterFullscreen": "ملء الشاشة",
+  "exitFullscreen": "الخروج من ملء الشاشة",
+  "nextLesson": "الدرس التالي",
+  "nextLessonLocked": "شاهد 90% من هذا الدرس لفتح الدرس التالي",
+  "lessonCompleted": "أحسنت! اكتمل الدرس",
+  "lastLesson": "هذا آخر درس في الدورة",
+  "backToCourse": "العودة إلى الدورة",
+
+  "notes": "ملاحظاتي",
+  "notesHint": "اكتب ملاحظاتك على هذا الدرس…",
+  "notesSaved": "تم الحفظ",
+
+  "switchLanguage": "English",
+  "toggleTheme": "تبديل الوضع الليلي"
+}

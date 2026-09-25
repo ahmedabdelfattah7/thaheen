@@ -1,0 +1,47 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "Thaheen",
+  "myCourses": "My courses",
+  "searchHint": "Search courses or instructors",
+  "continueWatching": "Continue watching",
+  "resume": "Resume",
+
+  "lessonsCount": "{count, plural, =0{No lessons} =1{1 lesson} other{{count} lessons}}",
+  "percentComplete": "{percent} complete",
+  "completedOfTotal": "{completed} of {total} completed",
+
+  "noCourses": "No courses yet",
+  "noSearchResults": "No results for “{query}”",
+  "loadCoursesError": "Couldn't load courses",
+  "retry": "Try again",
+
+  "courseNotFound": "Course not found",
+  "emptyCourse": "This course has no lessons yet",
+  "statusNotStarted": "Not started",
+  "statusInProgress": "In progress",
+  "statusCompleted": "Completed",
+  "statusLocked": "Locked",
+  "lockedLessonMessage": "This lesson is locked. Finish the previous lesson to unlock it.",
+
+  "lessonNotFound": "Lesson not found",
+  "videoError": "This video can't be played",
+  "videoErrorHint": "The file may be missing or damaged.",
+  "playbackSpeed": "Playback speed",
+  "play": "Play",
+  "pause": "Pause",
+  "enterFullscreen": "Full screen",
+  "exitFullscreen": "Exit full screen",
+  "nextLesson": "Next lesson",
+  "nextLessonLocked": "Watch 90% of this lesson to unlock the next one",
+  "lessonCompleted": "Nice! Lesson completed",
+  "lastLesson": "This is the last lesson of the course",
+  "backToCourse": "Back to course",
+
+  "notes": "My notes",
+  "notesHint": "Write your notes for this lesson…",
+  "notesSaved": "Saved",
+
+  "switchLanguage": "العربية",
+  "toggleTheme": "Toggle dark mode"
+}
