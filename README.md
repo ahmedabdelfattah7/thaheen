@@ -147,5 +147,4 @@ Other notes:
 
 ## Time spent
 
-About **_X_ hours** (fill in).
-shorten and make it to the point and readable
+About **4 hours** .
