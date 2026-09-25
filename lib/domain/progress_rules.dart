@@ -104,5 +104,7 @@ abstract final class ProgressRules {
     Course course,
     Lesson lesson,
     Map<String, LessonProgress> progress,
-  ) => progress[LessonProgress.keyOf(course.id, lesson.id)]?.isCompleted ?? false;
+  ) =>
+      progress[LessonProgress.keyOf(course.id, lesson.id)]?.isCompleted ??
+      false;
 }

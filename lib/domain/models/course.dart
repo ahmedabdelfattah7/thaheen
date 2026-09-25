@@ -40,7 +40,11 @@ class Course {
 }
 
 class Section {
-  const Section({required this.id, required this.title, this.lessons = const []});
+  const Section({
+    required this.id,
+    required this.title,
+    this.lessons = const [],
+  });
 
   factory Section.fromJson(Map<String, dynamic> json) => Section(
     id: json['id'] as String,

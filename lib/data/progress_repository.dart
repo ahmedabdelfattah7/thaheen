@@ -48,7 +48,9 @@ class ProgressRepository {
       final json = jsonDecode(raw) as Map<String, dynamic>;
       return {
         for (final entry in json.entries)
-          entry.key: LessonProgress.fromJson(entry.value as Map<String, dynamic>),
+          entry.key: LessonProgress.fromJson(
+            entry.value as Map<String, dynamic>,
+          ),
       };
     } catch (_) {
       // Corrupt data should not lock the student out of the app.

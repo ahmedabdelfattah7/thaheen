@@ -19,7 +19,8 @@ class LessonProgress {
   );
 
   /// Lesson ids are only unique inside a course, so progress is keyed by both.
-  static String keyOf(String courseId, String lessonId) => '$courseId/$lessonId';
+  static String keyOf(String courseId, String lessonId) =>
+      '$courseId/$lessonId';
 
   final String courseId;
   final String lessonId;

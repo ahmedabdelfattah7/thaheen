@@ -1,15 +1,29 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app.dart';
+import 'data/course_repository.dart';
+import 'data/notes_repository.dart';
+import 'data/progress_repository.dart';
+import 'data/settings_repository.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   ErrorWidget.builder = _friendlyErrorWidget;
+  // Only the lesson player rotates (for fullscreen).
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  runApp(const ThaheenApp());
+  final prefs = await SharedPreferences.getInstance();
+  runApp(
+    ThaheenApp(
+      courseRepository: CourseRepository(),
+      progressRepository: ProgressRepository(prefs),
+      notesRepository: NotesRepository(prefs),
+      settingsRepository: SettingsRepository(prefs),
+    ),
+  );
 }
 
 /// Replaces Flutter's red error screen with a calm message. It has no

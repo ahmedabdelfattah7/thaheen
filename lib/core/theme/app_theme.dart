@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 /// Light and dark themes generated from one brand seed color.
 abstract final class AppTheme {
-  static const _seed = Color(0xFF0E7C7B); // calm teal for a health-sciences brand
+  // Calm teal for a health-sciences brand.
+  static const _seed = Color(0xFF0E7C7B);
 
   static ThemeData light() => _build(Brightness.light);
 

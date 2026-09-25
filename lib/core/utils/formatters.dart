@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 /// Formats [duration] as `m:ss`, or `h:mm:ss` when it is an hour or longer.
 String formatDuration(Duration duration) {
   final d = duration.isNegative ? Duration.zero : duration;
@@ -9,3 +11,7 @@ String formatDuration(Duration duration) {
   }
   return '$minutes:$seconds';
 }
+
+/// Formats a 0.0–1.0 [value] as a locale-aware percentage, e.g. `75%`.
+String formatPercent(double value, String locale) =>
+    NumberFormat.percentPattern(locale).format(value);

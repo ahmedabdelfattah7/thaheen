@@ -91,14 +91,22 @@ void main() {
     test('a lesson stays locked while the previous one is unfinished', () {
       expect(ProgressRules.isUnlocked(course, 'b', {}), isFalse);
       expect(
-        ProgressRules.isUnlocked(course, 'b', byKey([progress('a', seconds: 80)])),
+        ProgressRules.isUnlocked(
+          course,
+          'b',
+          byKey([progress('a', seconds: 80)]),
+        ),
         isFalse,
       );
     });
 
     test('a lesson unlocks once the previous one is completed', () {
       expect(
-        ProgressRules.isUnlocked(course, 'b', byKey([progress('a', completed: true)])),
+        ProgressRules.isUnlocked(
+          course,
+          'b',
+          byKey([progress('a', completed: true)]),
+        ),
         isTrue,
       );
     });
@@ -199,10 +207,9 @@ void main() {
 
     test('is null when nothing is in progress', () {
       expect(
-        ProgressRules.continueWatching(
-          [course],
-          byKey([progress('a', completed: true)]),
-        ),
+        ProgressRules.continueWatching([
+          course,
+        ], byKey([progress('a', completed: true)])),
         isNull,
       );
     });

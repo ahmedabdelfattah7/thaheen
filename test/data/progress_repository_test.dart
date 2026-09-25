@@ -24,7 +24,9 @@ void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
   test('saved progress survives an app restart', () async {
-    final repository = ProgressRepository(await SharedPreferences.getInstance());
+    final repository = ProgressRepository(
+      await SharedPreferences.getInstance(),
+    );
     await repository.save(progress(seconds: 42));
 
     final saved = (await restartApp()).get('anatomy-101', 'l1');
@@ -35,7 +37,9 @@ void main() {
   });
 
   test('completion is sticky when a completed lesson is rewatched', () async {
-    final repository = ProgressRepository(await SharedPreferences.getInstance());
+    final repository = ProgressRepository(
+      await SharedPreferences.getInstance(),
+    );
     await repository.save(progress(seconds: 95, completed: true));
     await repository.save(progress(seconds: 5));
 
@@ -45,7 +49,9 @@ void main() {
   });
 
   test('notifies listeners when progress changes', () async {
-    final repository = ProgressRepository(await SharedPreferences.getInstance());
+    final repository = ProgressRepository(
+      await SharedPreferences.getInstance(),
+    );
     final next = repository.changes.first;
     await repository.save(progress());
     expect((await next).keys, ['anatomy-101/l1']);
