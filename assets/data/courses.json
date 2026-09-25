@@ -1,0 +1,62 @@
+{
+  "courses": [
+    {
+      "id": "anatomy-101",
+      "title": "مقدمة في التشريح",
+      "instructor": "د. سارة",
+      "description": "أساسيات الجهازين الهيكلي والعضلي لطلاب العلوم الصحية.",
+      "thumbnail": "assets/images/anatomy.png",
+      "sections": [
+        {
+          "id": "s1",
+          "title": "الجهاز الهيكلي",
+          "lessons": [
+            { "id": "l1", "title": "العظام", "durationSec": 20, "video": "assets/videos/lesson_1.mp4" },
+            { "id": "l2", "title": "المفاصل", "durationSec": 30, "video": "assets/videos/lesson_2.mp4" }
+          ]
+        },
+        {
+          "id": "s2",
+          "title": "الجهاز العضلي",
+          "lessons": [
+            { "id": "l3", "title": "أنواع العضلات", "durationSec": 40, "video": "assets/videos/lesson_3.mp4" },
+            { "id": "l4", "title": "كيف تنقبض العضلة", "durationSec": 20, "video": "assets/videos/lesson_1.mp4" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pharmacology-101",
+      "title": "أساسيات علم الأدوية",
+      "instructor": "د. خالد",
+      "description": "كيف يتعامل الجسم مع الدواء، وكيف يؤثر الدواء في الجسم.",
+      "thumbnail": "assets/images/pharmacology.png",
+      "sections": [
+        {
+          "id": "s1",
+          "title": "الحرائك الدوائية",
+          "lessons": [
+            { "id": "l1", "title": "الامتصاص", "durationSec": 30, "video": "assets/videos/lesson_2.mp4" },
+            { "id": "l2", "title": "التوزيع", "durationSec": 40, "video": "assets/videos/lesson_3.mp4" },
+            { "id": "l3", "title": "الإطراح", "durationSec": 20, "video": "assets/videos/lesson_1.mp4" }
+          ]
+        },
+        {
+          "id": "s2",
+          "title": "الديناميكا الدوائية",
+          "lessons": [
+            { "id": "l4", "title": "المستقبلات", "durationSec": 30, "video": "assets/videos/lesson_2.mp4" },
+            { "id": "l5", "title": "منحنى الجرعة والاستجابة", "durationSec": 60, "video": "assets/videos/corrupt_lesson.mp4" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "microbiology-101",
+      "title": "علم الأحياء الدقيقة",
+      "instructor": "د. منى",
+      "description": "قريبًا: يجري تجهيز محتوى هذه الدورة.",
+      "sections": []
+    }
+  ]
+}
