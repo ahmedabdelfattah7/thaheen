@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thaheen/app.dart';
+import 'package:thaheen/core/router/app_router.dart';
 import 'package:thaheen/data/course_repository.dart';
 import 'package:thaheen/data/notes_repository.dart';
 import 'package:thaheen/data/progress_repository.dart';
@@ -55,6 +56,7 @@ Future<void> pumpThaheenApp(
   final sharedPreferences = await SharedPreferences.getInstance();
   await tester.pumpWidget(
     ThaheenApp(
+      router: createRouter(),
       courseRepository: CourseRepository(bundle: bundle),
       progressRepository: ProgressRepository(sharedPreferences),
       notesRepository: NotesRepository(sharedPreferences),

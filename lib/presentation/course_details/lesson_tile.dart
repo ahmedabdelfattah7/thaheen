@@ -5,19 +5,20 @@ import '../../core/utils/formatters.dart';
 import '../../domain/models/course.dart';
 import '../../domain/progress_rules.dart';
 
+/// One lesson row. A locked lesson explains why instead of opening.
 class LessonTile extends StatelessWidget {
   const LessonTile({
     super.key,
     required this.lesson,
     required this.status,
     required this.isLocked,
-    required this.onTap,
+    required this.onOpen,
   });
 
   final Lesson lesson;
   final LessonStatus status;
   final bool isLocked;
-  final VoidCallback onTap;
+  final VoidCallback onOpen;
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +46,11 @@ class LessonTile extends StatelessWidget {
           };
 
     return ListTile(
-      onTap: onTap,
+      onTap: isLocked
+          ? () => ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(SnackBar(content: Text(l10n.lockedLessonMessage)))
+          : onOpen,
       leading: Icon(icon, color: color),
       title: Text(
         lesson.title,

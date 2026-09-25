@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../core/l10n/l10n.dart';
-import '../../core/router/app_router.dart';
-import '../../core/utils/formatters.dart';
-import '../../core/widgets/state_views.dart';
-import '../../domain/progress_rules.dart';
+import '../../core/widgets/empty_view.dart';
+import '../../core/widgets/error_view.dart';
+import '../../core/widgets/loading_view.dart';
 import '../settings/settings_cubit.dart';
-import 'continue_watching_card.dart';
-import 'course_card.dart';
 import 'courses_cubit.dart';
+import 'courses_list.dart';
 
 class CoursesScreen extends StatelessWidget {
   const CoursesScreen({super.key});
@@ -19,6 +16,7 @@ class CoursesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final settings = context.read<SettingsCubit>();
+    final brightness = Theme.of(context).brightness;
 
     return Scaffold(
       appBar: AppBar(
@@ -30,9 +28,9 @@ class CoursesScreen extends StatelessWidget {
           ),
           IconButton(
             tooltip: l10n.toggleTheme,
-            onPressed: () => settings.toggleTheme(Theme.of(context).brightness),
+            onPressed: () => settings.toggleTheme(brightness),
             icon: Icon(
-              Theme.of(context).brightness == Brightness.dark
+              brightness == Brightness.dark
                   ? Icons.light_mode_outlined
                   : Icons.dark_mode_outlined,
             ),
@@ -49,82 +47,9 @@ class CoursesScreen extends StatelessWidget {
           CoursesStatus.loaded when state.courses.isEmpty => EmptyView(
             message: l10n.noCourses,
           ),
-          CoursesStatus.loaded => _CourseList(state: state),
+          CoursesStatus.loaded => CoursesList(state: state),
         },
       ),
-    );
-  }
-}
-
-class _CourseList extends StatelessWidget {
-  const _CourseList({required this.state});
-
-  final CoursesState state;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final courses = state.visibleCourses;
-    final continueItem = state.query.isEmpty
-        ? ProgressRules.continueWatching(state.courses, state.progress)
-        : null;
-
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: TextField(
-            onChanged: context.read<CoursesCubit>().search,
-            textInputAction: TextInputAction.search,
-            decoration: InputDecoration(
-              hintText: l10n.searchHint,
-              prefixIcon: const Icon(Icons.search),
-            ),
-          ),
-        ),
-        Expanded(
-          child: courses.isEmpty
-              ? EmptyView(
-                  icon: Icons.search_off,
-                  message: l10n.noSearchResults(
-                    bidiIsolate(state.query.trim()),
-                  ),
-                )
-              : ListView(
-                  padding: const EdgeInsetsDirectional.fromSTEB(16, 8, 16, 24),
-                  children: [
-                    if (continueItem != null) ...[
-                      Text(
-                        l10n.continueWatching,
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      const SizedBox(height: 8),
-                      ContinueWatchingCard(
-                        item: continueItem,
-                        onTap: () => context.go(
-                          AppRoutes.lesson(
-                            continueItem.course.id,
-                            continueItem.lesson.id,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                    ],
-                    for (final course in courses) ...[
-                      CourseCard(
-                        course: course,
-                        progress: ProgressRules.courseProgress(
-                          course,
-                          state.progress,
-                        ),
-                        onTap: () => context.go(AppRoutes.course(course.id)),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-                  ],
-                ),
-        ),
-      ],
     );
   }
 }

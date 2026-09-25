@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:video_player/video_player.dart';
 
@@ -9,51 +10,31 @@ import '../../data/settings_repository.dart';
 import '../../domain/models/course.dart';
 import '../../domain/models/lesson_progress.dart';
 import '../../domain/progress_rules.dart';
+import 'player_state.dart';
 
-enum PlayerStatus { loading, ready, failure }
+export 'player_state.dart';
 
-class PlayerState {
-  const PlayerState({
-    this.status = PlayerStatus.loading,
-    this.speed = 1.0,
-    this.isCompleted = false,
-  });
-
-  final PlayerStatus status;
-  final double speed;
-
-  /// True once the lesson reached 90%, which also unlocks the next lesson.
-  final bool isCompleted;
-
-  PlayerState copyWith({
-    PlayerStatus? status,
-    double? speed,
-    bool? isCompleted,
-  }) => PlayerState(
-    status: status ?? this.status,
-    speed: speed ?? this.speed,
-    isCompleted: isCompleted ?? this.isCompleted,
-  );
-}
-
-/// Plays one lesson and records how far the student got.
+/// Plays one lesson and owns everything the player screen shows: loading and
+/// errors, speed, completion, fullscreen and the on-screen controls.
 ///
-/// The UI reads the fast-changing position straight from [controller]; this
-/// cubit only emits coarse changes (loading/ready/failure, speed, completion).
+/// The fast-changing position is read straight from [controller] by the seek
+/// bar; this cubit only emits coarse changes.
 class PlayerCubit extends Cubit<PlayerState> {
   PlayerCubit({
-    required this.courseId,
+    required this.course,
     required this.lesson,
     required ProgressRepository progress,
     required SettingsRepository settings,
   }) : _progress = progress,
        _settings = settings,
+       nextLesson = ProgressRules.nextLesson(course, lesson.id),
        super(
          PlayerState(
            speed: speeds.contains(settings.playbackSpeed)
                ? settings.playbackSpeed
                : 1.0,
-           isCompleted: progress.get(courseId, lesson.id)?.isCompleted ?? false,
+           isCompleted:
+               progress.get(course.id, lesson.id)?.isCompleted ?? false,
          ),
        );
 
@@ -62,9 +43,13 @@ class PlayerCubit extends Cubit<PlayerState> {
   /// A crash or kill loses at most this much watching time.
   static const _saveEvery = Duration(seconds: 5);
   static const _loadTimeout = Duration(seconds: 15);
+  static const _controlsTimeout = Duration(seconds: 3);
 
-  final String courseId;
+  final Course course;
   final Lesson lesson;
+
+  /// The lesson after this one, or null for the last lesson of the course.
+  final Lesson? nextLesson;
   final ProgressRepository _progress;
   final SettingsRepository _settings;
 
@@ -77,6 +62,7 @@ class PlayerCubit extends Cubit<PlayerState> {
   Duration _duration = Duration.zero;
   Duration _savedPosition = Duration.zero;
   bool _wasPlaying = false;
+  Timer? _hideControlsTimer;
 
   Future<void> load() async {
     emit(state.copyWith(status: PlayerStatus.loading));
@@ -95,7 +81,7 @@ class PlayerCubit extends Cubit<PlayerState> {
 
     _duration = controller.value.duration;
     _position = ProgressRules.resumePosition(
-      _progress.get(courseId, lesson.id),
+      _progress.get(course.id, lesson.id),
       _duration,
     );
     _savedPosition = _position;
@@ -122,12 +108,57 @@ class PlayerCubit extends Cubit<PlayerState> {
         : await controller.play();
   }
 
-  Future<void> seekTo(Duration position) async => _controller?.seekTo(position);
+  /// Moves the seek bar thumb while the student drags it.
+  void previewSeek(Duration position) {
+    _hideControlsTimer?.cancel();
+    emit(state.copyWith(seekPreview: position));
+  }
+
+  Future<void> seekTo(Duration position) async {
+    await _controller?.seekTo(position);
+    if (isClosed) return;
+    emit(state.copyWith(clearSeekPreview: true));
+    _scheduleHideControls();
+  }
 
   Future<void> setSpeed(double speed) async {
     emit(state.copyWith(speed: speed));
+    _scheduleHideControls();
     await _controller?.setPlaybackSpeed(speed);
     await _settings.setPlaybackSpeed(speed);
+  }
+
+  /// The fullscreen button forces landscape and hides the system bars.
+  /// Turning the phone sideways also shows the fullscreen layout.
+  Future<void> setFullscreen(bool fullscreen) async {
+    emit(state.copyWith(isFullscreen: fullscreen));
+    await SystemChrome.setPreferredOrientations(
+      fullscreen
+          ? const [
+              DeviceOrientation.landscapeLeft,
+              DeviceOrientation.landscapeRight,
+            ]
+          : const [DeviceOrientation.portraitUp],
+    );
+    await SystemChrome.setEnabledSystemUIMode(
+      fullscreen ? SystemUiMode.immersiveSticky : SystemUiMode.edgeToEdge,
+    );
+  }
+
+  /// Tapping the video shows or hides the controls.
+  void toggleControls() {
+    final visible = !state.controlsVisible;
+    emit(state.copyWith(controlsVisible: visible));
+    if (visible) _scheduleHideControls();
+  }
+
+  /// Controls fade out after a few seconds, but only while playing.
+  void _scheduleHideControls() {
+    _hideControlsTimer?.cancel();
+    _hideControlsTimer = Timer(_controlsTimeout, () {
+      final playing = _controller?.value.isPlaying ?? false;
+      if (!isClosed && playing) emit(state.copyWith(controlsVisible: false));
+    });
   }
 
   void _onPlayerUpdate() {
@@ -145,13 +176,22 @@ class PlayerCubit extends Cubit<PlayerState> {
 
     _position = value.position;
     _duration = value.duration;
-    final justPaused = _wasPlaying && !value.isPlaying;
-    _wasPlaying = value.isPlaying;
+
+    if (value.isPlaying != _wasPlaying) {
+      _wasPlaying = value.isPlaying;
+      if (value.isPlaying) {
+        _scheduleHideControls();
+      } else {
+        // Paused or finished: keep the controls on screen and save.
+        emit(state.copyWith(controlsVisible: true));
+        unawaited(_saveProgress());
+      }
+    }
 
     if (!state.isCompleted && ProgressRules.isCompleted(_position, _duration)) {
       emit(state.copyWith(isCompleted: true));
       unawaited(_saveProgress());
-    } else if (justPaused || (_position - _savedPosition).abs() >= _saveEvery) {
+    } else if ((_position - _savedPosition).abs() >= _saveEvery) {
       unawaited(_saveProgress());
     }
   }
@@ -160,13 +200,13 @@ class PlayerCubit extends Cubit<PlayerState> {
     // Nothing to save until a video has actually loaded.
     if (_duration <= Duration.zero) return;
     // Opening a lesson without watching it does not start it.
-    final existing = _progress.get(courseId, lesson.id);
+    final existing = _progress.get(course.id, lesson.id);
     if (_position <= Duration.zero && existing == null) return;
 
     _savedPosition = _position;
     await _progress.save(
       LessonProgress(
-        courseId: courseId,
+        courseId: course.id,
         lessonId: lesson.id,
         position: _position,
         duration: _duration,
@@ -188,7 +228,11 @@ class PlayerCubit extends Cubit<PlayerState> {
 
   @override
   Future<void> close() async {
+    _hideControlsTimer?.cancel();
     _disposeController();
+    // Undo what the fullscreen button changed.
+    unawaited(SystemChrome.setPreferredOrientations(const []));
+    unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge));
     await _saveProgress();
     return super.close();
   }

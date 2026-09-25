@@ -5,56 +5,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../data/course_repository.dart';
 import '../../data/progress_repository.dart';
-import '../../domain/models/course.dart';
 import '../../domain/models/lesson_progress.dart';
+import 'courses_state.dart';
 
-enum CoursesStatus { loading, loaded, failure }
-
-class CoursesState {
-  const CoursesState({
-    this.status = CoursesStatus.loading,
-    this.courses = const [],
-    this.progress = const {},
-    this.query = '',
-  });
-
-  final CoursesStatus status;
-  final List<Course> courses;
-  final Map<String, LessonProgress> progress;
-  final String query;
-
-  /// Courses whose title or instructor matches the search query.
-  List<Course> get visibleCourses {
-    final q = query.trim().toLowerCase();
-    if (q.isEmpty) return courses;
-    return courses
-        .where(
-          (c) =>
-              c.title.toLowerCase().contains(q) ||
-              c.instructor.toLowerCase().contains(q),
-        )
-        .toList();
-  }
-
-  Course? courseById(String id) {
-    for (final course in courses) {
-      if (course.id == id) return course;
-    }
-    return null;
-  }
-
-  CoursesState copyWith({
-    CoursesStatus? status,
-    List<Course>? courses,
-    Map<String, LessonProgress>? progress,
-    String? query,
-  }) => CoursesState(
-    status: status ?? this.status,
-    courses: courses ?? this.courses,
-    progress: progress ?? this.progress,
-    query: query ?? this.query,
-  );
-}
+export 'courses_state.dart';
 
 /// App-wide catalog + progress. Both the courses list and the course
 /// details screen read from it, and it refreshes whenever progress is saved.

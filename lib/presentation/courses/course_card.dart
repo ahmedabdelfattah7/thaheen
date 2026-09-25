@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/l10n/l10n.dart';
 import '../../core/utils/formatters.dart';
 import '../../domain/models/course.dart';
+import 'course_thumbnail.dart';
 
 class CourseCard extends StatelessWidget {
   const CourseCard({
@@ -72,41 +73,6 @@ class CourseCard extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-/// Course image with a neutral placeholder when it is missing or broken.
-class CourseThumbnail extends StatelessWidget {
-  const CourseThumbnail({super.key, required this.path});
-
-  final String? path;
-
-  @override
-  Widget build(BuildContext context) {
-    final path = this.path;
-    if (path == null) return const _Placeholder();
-    return Image.asset(
-      path,
-      fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) => const _Placeholder(),
-    );
-  }
-}
-
-class _Placeholder extends StatelessWidget {
-  const _Placeholder();
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    return ColoredBox(
-      color: colors.secondaryContainer,
-      child: Icon(
-        Icons.school_outlined,
-        size: 40,
-        color: colors.onSecondaryContainer,
       ),
     );
   }

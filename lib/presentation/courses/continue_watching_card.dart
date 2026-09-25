@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/utils/formatters.dart';
 import '../../domain/progress_rules.dart';
-import 'course_card.dart';
+import 'course_thumbnail.dart';
 
 /// Shortcut back into the most recently watched unfinished lesson.
 class ContinueWatchingCard extends StatelessWidget {

@@ -16,6 +16,10 @@ String formatDuration(Duration duration) {
 String formatPercent(double value, String locale) =>
     NumberFormat.percentPattern(locale).format(value);
 
+/// Formats a playback speed as `1x`, `1.25x`, `2x`.
+String formatSpeed(double speed) =>
+    '${speed == speed.roundToDouble() ? speed.toInt() : speed}x';
+
 /// Wraps [text] in Unicode isolate marks (FSI ... PDI) so text in another
 /// script can't reorder what's around it, e.g. an Arabic name followed by
 /// "4 lessons" in the English UI.

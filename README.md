@@ -30,7 +30,7 @@ The demo videos and thumbnails are committed. `python3 tool/generate_demo_media.
   - resumes from the last position
   - auto-completes at 90%, and "Next lesson" respects the unlock rule
 - **Persistence:** positions, completion, notes, theme, language and the last speed all survive a restart.
-- **Arabic-first RTL UI:** loading, empty and error states throughout, with no red screens.
+- **Arabic-first RTL UI** with the bundled Tajawal font (Arabic + Latin), and loading, empty and error states throughout, with no red screens.
 
 **Bonus:** dark mode, an Arabic/English switch, course search, per-lesson notes, remembered playback speed and widget tests.
 
@@ -48,6 +48,7 @@ Dependencies point one way: `presentation → data → domain`. I kept it delibe
 - **No use-case classes.** With one repository per concern, they would only forward calls.
 - **The real logic is one pure class,** `domain/progress_rules.dart`. It covers the 90% rule, unlock, course %, resume, continue-watching and next lesson, and it's the most heavily tested part.
 - **DI** is plain `RepositoryProvider`. Repositories are created once in `main.dart`, with no service locator.
+- **Widgets are stateless,** one public widget per file. Screen state lives in the cubits, including player UI state (fullscreen, control visibility, the seek-bar drag position). Derived data like course %, lesson status and lock state comes from getters on `CoursesState`, so widgets only render.
 
 ### State management: Cubit (flutter_bloc)
 
@@ -55,7 +56,7 @@ Dependencies point one way: `presentation → data → domain`. I kept it delibe
 |---|---|---|
 | `SettingsCubit` | app | theme mode + language |
 | `CoursesCubit` | app | catalog (loading / loaded / failure), saved progress, search query |
-| `PlayerCubit` | one lesson | video lifecycle, speed, 90% completion, saving progress |
+| `PlayerCubit` | one lesson | video lifecycle, speed, 90% completion, saving progress, fullscreen, on-screen controls |
 | `NotesCubit` | one lesson | the lesson note, saved after typing stops |
 
 - **Why Cubit:** the state changes are simple and explicit. A Cubit is easy to read and easy to test without the extra event classes Bloc would add.
@@ -131,14 +132,13 @@ I kept the suggested shape and added an optional `description` per course.
 - **English mode:** course content is Arabic only, so the English switch translates the UI, not course titles.
 - **Search** is a plain "contains" match, with no Arabic letter normalization (e.g. أ/ا).
 - **go_router is pinned to 17.x.** 18.x moved to the new `material_ui` package, whose `MaterialApp` type differs from `package:flutter/material.dart`'s, so go_router's Material page detection fails.
-- **Media and font:** the demo clips are silent, and the app uses the platform's Arabic font.
+- **Media:** the demo clips are silent.
 
 ## With more time
 
 - Completion based on watched segments, so skipping ahead can't complete a lesson.
 - Localized course content (`{ "ar": …, "en": … }`) and Arabic search normalization.
 - A wakelock during playback, double-tap ±10 s, and captions.
-- A bundled Arabic font (e.g. IBM Plex Sans Arabic).
 - Integration tests on a real device, golden tests for RTL layouts, and CI (analyze + test).
 
 ## Time spent
