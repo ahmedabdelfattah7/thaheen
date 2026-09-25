@@ -13,7 +13,7 @@ Flutter 3.47 (stable) / Dart 3.13.
 ```bash
 flutter pub get
 flutter run            # Android or iOS device/simulator
-flutter test           # 36 unit + widget tests
+flutter test           # 37 unit + widget tests
 flutter build apk --release
 ```
 
@@ -32,7 +32,7 @@ The demo videos and thumbnails are committed. `python3 tool/generate_demo_media.
 - **Persistence:** positions, completion, notes, theme, language and the last speed all survive a restart.
 - **Arabic-first RTL UI** with the bundled Tajawal font (Arabic + Latin), and loading, empty and error states throughout, with no red screens.
 
-**Bonus:** dark mode, an Arabic/English switch, course search, per-lesson notes, remembered playback speed and widget tests.
+**Bonus:** dark mode, an Arabic/English switch (UI and course content), course search, per-lesson notes, remembered playback speed and widget tests.
 
 ## Architecture
 
@@ -85,7 +85,11 @@ Dependencies point one way: `presentation → data → domain`. I kept it delibe
 
 ## Data shape
 
-I kept the suggested shape and added an optional `description` per course.
+I kept the suggested shape with two additions:
+- **Bilingual content:** every text field (course title, instructor, description, section and lesson titles) is `{ "ar": …, "en": … }`, so the English switch translates the courses too. A plain string (the original shape) still works and counts as Arabic. A missing English translation falls back to Arabic.
+- An optional `description` per course.
+
+Other notes:
 - Lesson ids are only unique inside a course (`l1` exists in both courses), so progress is keyed by `courseId/lessonId`.
 - `durationSec` is display metadata only.
 - **Deliberate demo edge cases:**
@@ -101,7 +105,7 @@ I kept the suggested shape and added an optional `description` per course.
   - For an Arabic-first product I followed reading direction, and kept fill, dragging, tapping and time labels consistent with each other.
   - Play/pause glyphs are never mirrored.
 - **Arabic plurals** via ICU: درس واحد، درسان، 3 دروس، 11 درسًا.
-- **Mixed-script text:** Arabic content shown inside English UI text is wrapped in Unicode isolates (FSI/PDI). Without them, `د. سارة · 4 lessons` gets reordered.
+- **Mixed-script text:** content shown inside UI strings (names, titles) is wrapped in Unicode isolates (FSI/PDI). If a translation is missing and Arabic appears in the English UI, `د. سارة · 4 lessons` still reads correctly instead of reordering.
 - **Digits:** Western digits in both languages, matching the `intl` `ar` locale.
 
 ## States and errors
@@ -116,7 +120,7 @@ I kept the suggested shape and added an optional `description` per course.
 
 ## Tests
 
-`flutter test` runs 36 tests.
+`flutter test` runs 37 tests.
 - **Unit tests:**
   - `ProgressRules`: the 90% boundary, unknown duration, unlock (including across sections), course % (including an empty course), status, resume at the end, continue-watching
   - repositories: progress survives a restart (a new instance on the same storage), completion is sticky, corrupt storage, corrupt or invalid catalog
@@ -130,15 +134,14 @@ I kept the suggested shape and added an optional `description` per course.
 - **Seeking past 90% counts as completion,** because the rule is position-based. A stricter version would track watched segments.
 - **Fullscreen orientation:** exiting fullscreen with the button locks portrait until you leave the player. Re-enabling auto-rotate would flip straight back while the phone is still sideways.
 - **Screen sleep on Android:** the screen isn't kept awake during playback (no wakelock package).
-- **English mode:** course content is Arabic only, so the English switch translates the UI, not course titles.
-- **Search** is a plain "contains" match, with no Arabic letter normalization (e.g. أ/ا).
+- **Search** is a plain "contains" match in both languages, with no Arabic letter normalization (e.g. أ/ا).
 - **go_router is pinned to 17.x.** 18.x moved to the new `material_ui` package, whose `MaterialApp` type differs from `package:flutter/material.dart`'s, so go_router's Material page detection fails.
 - **Media:** the demo clips are silent.
 
 ## With more time
 
 - Completion based on watched segments, so skipping ahead can't complete a lesson.
-- Localized course content (`{ "ar": …, "en": … }`) and Arabic search normalization.
+- Arabic search normalization (أ/إ/آ → ا, ة → ه).
 - A wakelock during playback, double-tap ±10 s, and captions.
 - Integration tests on a real device, golden tests for RTL layouts, and CI (analyze + test).
 

@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:thaheen/domain/models/course.dart';
 import 'package:thaheen/domain/models/lesson_progress.dart';
+import 'package:thaheen/domain/models/localized_text.dart';
 import 'package:thaheen/domain/progress_rules.dart';
 
 const _lesson = Duration(seconds: 100);
@@ -8,21 +9,38 @@ const _lesson = Duration(seconds: 100);
 // Two sections: [a, b] then [c].
 const course = Course(
   id: 'course',
-  title: 'Course',
-  instructor: 'Dr.',
+  title: LocalizedText(ar: 'Course'),
+  instructor: LocalizedText(ar: 'Dr.'),
   sections: [
     Section(
       id: 's1',
-      title: 'S1',
+      title: LocalizedText(ar: 'S1'),
       lessons: [
-        Lesson(id: 'a', title: 'a', duration: _lesson, video: 'a.mp4'),
-        Lesson(id: 'b', title: 'b', duration: _lesson, video: 'b.mp4'),
+        Lesson(
+          id: 'a',
+          title: LocalizedText(ar: 'a'),
+          duration: _lesson,
+          video: 'a.mp4',
+        ),
+        Lesson(
+          id: 'b',
+          title: LocalizedText(ar: 'b'),
+          duration: _lesson,
+          video: 'b.mp4',
+        ),
       ],
     ),
     Section(
       id: 's2',
-      title: 'S2',
-      lessons: [Lesson(id: 'c', title: 'c', duration: _lesson, video: 'c.mp4')],
+      title: LocalizedText(ar: 'S2'),
+      lessons: [
+        Lesson(
+          id: 'c',
+          title: LocalizedText(ar: 'c'),
+          duration: _lesson,
+          video: 'c.mp4',
+        ),
+      ],
     ),
   ],
 );
@@ -151,7 +169,11 @@ void main() {
     });
 
     test('is 0 (not NaN) for a course with no lessons', () {
-      const empty = Course(id: 'empty', title: 'Empty', instructor: 'Dr.');
+      const empty = Course(
+        id: 'empty',
+        title: LocalizedText(ar: 'Empty'),
+        instructor: LocalizedText(ar: 'Dr.'),
+      );
       expect(ProgressRules.courseProgress(empty, {}), 0);
     });
 

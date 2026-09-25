@@ -19,16 +19,13 @@ class CoursesState {
   final Map<String, LessonProgress> progress;
   final String query;
 
-  /// Courses whose title or instructor matches the search query.
+  /// Courses whose title or instructor matches the search query, in
+  /// either language.
   List<Course> get visibleCourses {
-    final q = query.trim().toLowerCase();
+    final q = query.trim();
     if (q.isEmpty) return courses;
     return courses
-        .where(
-          (c) =>
-              c.title.toLowerCase().contains(q) ||
-              c.instructor.toLowerCase().contains(q),
-        )
+        .where((c) => c.title.contains(q) || c.instructor.contains(q))
         .toList();
   }
 

@@ -20,7 +20,7 @@ class CourseDetailsScreen extends StatelessWidget {
       builder: (context, state) {
         final course = state.courseById(courseId);
         return Scaffold(
-          appBar: AppBar(title: Text(course?.title ?? '')),
+          appBar: AppBar(title: Text(course?.title.of(l10n.localeName) ?? '')),
           body: switch (state.status) {
             CoursesStatus.loading => const LoadingView(),
             CoursesStatus.failure => ErrorView(

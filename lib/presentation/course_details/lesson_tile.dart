@@ -53,7 +53,7 @@ class LessonTile extends StatelessWidget {
           : onOpen,
       leading: Icon(icon, color: color),
       title: Text(
-        lesson.title,
+        lesson.title.of(l10n.localeName),
         style: TextStyle(color: isLocked ? colors.outline : null),
       ),
       subtitle: Text('${formatDuration(lesson.duration)} · $label'),

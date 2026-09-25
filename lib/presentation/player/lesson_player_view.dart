@@ -23,6 +23,7 @@ class LessonPlayerView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final lang = l10n.localeName;
     final theme = Theme.of(context);
     final failed = context.select(
       (PlayerCubit c) => c.state.status == PlayerStatus.failure,
@@ -44,7 +45,7 @@ class LessonPlayerView extends StatelessWidget {
               body: SafeArea(child: video),
             )
           : Scaffold(
-              appBar: AppBar(title: Text(lesson.title)),
+              appBar: AppBar(title: Text(lesson.title.of(lang))),
               body: ListView(
                 children: [
                   AspectRatio(
@@ -59,8 +60,14 @@ class LessonPlayerView extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Text(lesson.title, style: theme.textTheme.titleLarge),
-                        Text(course.title, style: theme.textTheme.bodyMedium),
+                        Text(
+                          lesson.title.of(lang),
+                          style: theme.textTheme.titleLarge,
+                        ),
+                        Text(
+                          course.title.of(lang),
+                          style: theme.textTheme.bodyMedium,
+                        ),
                         const SizedBox(height: 16),
                         const NextLessonButton(),
                         const SizedBox(height: 24),

@@ -2,60 +2,69 @@
   "courses": [
     {
       "id": "anatomy-101",
-      "title": "مقدمة في التشريح",
-      "instructor": "د. سارة",
-      "description": "أساسيات الجهازين الهيكلي والعضلي لطلاب العلوم الصحية.",
+      "title": { "ar": "مقدمة في التشريح", "en": "Introduction to Anatomy" },
+      "instructor": { "ar": "د. سارة", "en": "Dr. Sara" },
+      "description": {
+        "ar": "أساسيات الجهازين الهيكلي والعضلي لطلاب العلوم الصحية.",
+        "en": "The basics of the skeletal and muscular systems for health-sciences students."
+      },
       "thumbnail": "assets/images/anatomy.png",
       "sections": [
         {
           "id": "s1",
-          "title": "الجهاز الهيكلي",
+          "title": { "ar": "الجهاز الهيكلي", "en": "Skeletal System" },
           "lessons": [
-            { "id": "l1", "title": "العظام", "durationSec": 20, "video": "assets/videos/lesson_1.mp4" },
-            { "id": "l2", "title": "المفاصل", "durationSec": 30, "video": "assets/videos/lesson_2.mp4" }
+            { "id": "l1", "title": { "ar": "العظام", "en": "Bones" }, "durationSec": 20, "video": "assets/videos/lesson_1.mp4" },
+            { "id": "l2", "title": { "ar": "المفاصل", "en": "Joints" }, "durationSec": 30, "video": "assets/videos/lesson_2.mp4" }
           ]
         },
         {
           "id": "s2",
-          "title": "الجهاز العضلي",
+          "title": { "ar": "الجهاز العضلي", "en": "Muscular System" },
           "lessons": [
-            { "id": "l3", "title": "أنواع العضلات", "durationSec": 40, "video": "assets/videos/lesson_3.mp4" },
-            { "id": "l4", "title": "كيف تنقبض العضلة", "durationSec": 20, "video": "assets/videos/lesson_1.mp4" }
+            { "id": "l3", "title": { "ar": "أنواع العضلات", "en": "Types of Muscle" }, "durationSec": 40, "video": "assets/videos/lesson_3.mp4" },
+            { "id": "l4", "title": { "ar": "كيف تنقبض العضلة", "en": "How a Muscle Contracts" }, "durationSec": 20, "video": "assets/videos/lesson_1.mp4" }
           ]
         }
       ]
     },
     {
       "id": "pharmacology-101",
-      "title": "أساسيات علم الأدوية",
-      "instructor": "د. خالد",
-      "description": "كيف يتعامل الجسم مع الدواء، وكيف يؤثر الدواء في الجسم.",
+      "title": { "ar": "أساسيات علم الأدوية", "en": "Pharmacology Basics" },
+      "instructor": { "ar": "د. خالد", "en": "Dr. Khaled" },
+      "description": {
+        "ar": "كيف يتعامل الجسم مع الدواء، وكيف يؤثر الدواء في الجسم.",
+        "en": "How the body handles a drug, and how a drug acts on the body."
+      },
       "thumbnail": "assets/images/pharmacology.png",
       "sections": [
         {
           "id": "s1",
-          "title": "الحرائك الدوائية",
+          "title": { "ar": "الحرائك الدوائية", "en": "Pharmacokinetics" },
           "lessons": [
-            { "id": "l1", "title": "الامتصاص", "durationSec": 30, "video": "assets/videos/lesson_2.mp4" },
-            { "id": "l2", "title": "التوزيع", "durationSec": 40, "video": "assets/videos/lesson_3.mp4" },
-            { "id": "l3", "title": "الإطراح", "durationSec": 20, "video": "assets/videos/lesson_1.mp4" }
+            { "id": "l1", "title": { "ar": "الامتصاص", "en": "Absorption" }, "durationSec": 30, "video": "assets/videos/lesson_2.mp4" },
+            { "id": "l2", "title": { "ar": "التوزيع", "en": "Distribution" }, "durationSec": 40, "video": "assets/videos/lesson_3.mp4" },
+            { "id": "l3", "title": { "ar": "الإطراح", "en": "Excretion" }, "durationSec": 20, "video": "assets/videos/lesson_1.mp4" }
           ]
         },
         {
           "id": "s2",
-          "title": "الديناميكا الدوائية",
+          "title": { "ar": "الديناميكا الدوائية", "en": "Pharmacodynamics" },
           "lessons": [
-            { "id": "l4", "title": "المستقبلات", "durationSec": 30, "video": "assets/videos/lesson_2.mp4" },
-            { "id": "l5", "title": "منحنى الجرعة والاستجابة", "durationSec": 60, "video": "assets/videos/corrupt_lesson.mp4" }
+            { "id": "l4", "title": { "ar": "المستقبلات", "en": "Receptors" }, "durationSec": 30, "video": "assets/videos/lesson_2.mp4" },
+            { "id": "l5", "title": { "ar": "منحنى الجرعة والاستجابة", "en": "The Dose-Response Curve" }, "durationSec": 60, "video": "assets/videos/corrupt_lesson.mp4" }
           ]
         }
       ]
     },
     {
       "id": "microbiology-101",
-      "title": "علم الأحياء الدقيقة",
-      "instructor": "د. منى",
-      "description": "قريبًا: يجري تجهيز محتوى هذه الدورة.",
+      "title": { "ar": "علم الأحياء الدقيقة", "en": "Microbiology" },
+      "instructor": { "ar": "د. منى", "en": "Dr. Mona" },
+      "description": {
+        "ar": "قريبًا: يجري تجهيز محتوى هذه الدورة.",
+        "en": "Coming soon: this course is being prepared."
+      },
       "sections": []
     }
   ]

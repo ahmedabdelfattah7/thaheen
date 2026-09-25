@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/l10n/l10n.dart';
 import '../../core/utils/formatters.dart';
 import '../../domain/progress_rules.dart';
 import 'course_thumbnail.dart';
@@ -17,6 +18,7 @@ class ContinueWatchingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final lang = context.l10n.localeName;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final progress = item.progress;
@@ -48,13 +50,13 @@ class ContinueWatchingCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      item.lesson.title,
+                      item.lesson.title.of(lang),
                       style: theme.textTheme.titleSmall?.copyWith(
                         color: colors.onPrimaryContainer,
                       ),
                     ),
                     Text(
-                      '${bidiIsolate(item.course.title)} · '
+                      '${bidiIsolate(item.course.title.of(lang))} · '
                       '${formatDuration(progress.position)}',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,

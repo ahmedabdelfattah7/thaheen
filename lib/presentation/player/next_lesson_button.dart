@@ -51,7 +51,9 @@ class NextLessonButton extends StatelessWidget {
       // arrow_forward mirrors in RTL, so it points "forward" in Arabic too.
       icon: Icon(isCompleted ? Icons.arrow_forward : Icons.lock_outline),
       iconAlignment: IconAlignment.end,
-      label: Text('${l10n.nextLesson}: ${bidiIsolate(next.title)}'),
+      label: Text(
+        '${l10n.nextLesson}: ${bidiIsolate(next.title.of(l10n.localeName))}',
+      ),
     );
   }
 }

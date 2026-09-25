@@ -20,6 +20,7 @@ class CourseOutline extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final lang = l10n.localeName;
     final theme = Theme.of(context);
     final total = course.lessons.length;
     final completed = state.completedLessonsOf(course);
@@ -37,10 +38,10 @@ class CourseOutline extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(course.title, style: theme.textTheme.headlineSmall),
+              Text(course.title.of(lang), style: theme.textTheme.headlineSmall),
               const SizedBox(height: 4),
               Text(
-                course.instructor,
+                course.instructor.of(lang),
                 style: theme.textTheme.titleSmall?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
@@ -49,7 +50,7 @@ class CourseOutline extends StatelessWidget {
                 const SizedBox(height: 12),
                 Text(
                   // Isolated so Arabic punctuation stays put in the English UI.
-                  bidiIsolate(course.description),
+                  bidiIsolate(course.description.of(lang)),
                   style: theme.textTheme.bodyMedium,
                 ),
               ],
@@ -82,7 +83,7 @@ class CourseOutline extends StatelessWidget {
           Padding(
             padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 4),
             child: Text(
-              section.title,
+              section.title.of(lang),
               style: theme.textTheme.titleSmall?.copyWith(
                 color: theme.colorScheme.primary,
               ),

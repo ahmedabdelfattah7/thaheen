@@ -59,7 +59,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('switching to English flips the layout to LTR', (tester) async {
+  testWidgets('English flips the layout to LTR and translates courses', (
+    tester,
+  ) async {
     await pumpThaheenApp(tester);
     expect(
       Directionality.of(tester.element(find.text('دوراتي'))),
@@ -74,5 +76,13 @@ void main() {
       Directionality.of(tester.element(find.text('My courses'))),
       TextDirection.ltr,
     );
+    // Course content is translated too.
+    expect(find.text('Introduction to Anatomy'), findsOneWidget);
+    expect(find.text('مقدمة في التشريح'), findsNothing);
+
+    await tester.enterText(find.byType(TextField), 'pharma');
+    await tester.pumpAndSettle();
+    expect(find.text('Pharmacology Basics'), findsOneWidget);
+    expect(find.text('Introduction to Anatomy'), findsNothing);
   });
 }

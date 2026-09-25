@@ -1,19 +1,21 @@
+import 'localized_text.dart';
+
 /// A course from the bundled catalog (`assets/data/courses.json`).
 class Course {
   const Course({
     required this.id,
     required this.title,
     required this.instructor,
-    this.description = '',
+    this.description = LocalizedText.empty,
     this.thumbnail,
     this.sections = const [],
   });
 
   factory Course.fromJson(Map<String, dynamic> json) => Course(
     id: json['id'] as String,
-    title: json['title'] as String,
-    instructor: json['instructor'] as String? ?? '',
-    description: json['description'] as String? ?? '',
+    title: LocalizedText.fromJson(json['title']),
+    instructor: LocalizedText.fromJson(json['instructor'] ?? ''),
+    description: LocalizedText.fromJson(json['description'] ?? ''),
     thumbnail: json['thumbnail'] as String?,
     sections: [
       for (final section in json['sections'] as List? ?? const [])
@@ -22,9 +24,9 @@ class Course {
   );
 
   final String id;
-  final String title;
-  final String instructor;
-  final String description;
+  final LocalizedText title;
+  final LocalizedText instructor;
+  final LocalizedText description;
   final String? thumbnail;
   final List<Section> sections;
 
@@ -48,7 +50,7 @@ class Section {
 
   factory Section.fromJson(Map<String, dynamic> json) => Section(
     id: json['id'] as String,
-    title: json['title'] as String,
+    title: LocalizedText.fromJson(json['title']),
     lessons: [
       for (final lesson in json['lessons'] as List? ?? const [])
         Lesson.fromJson(lesson as Map<String, dynamic>),
@@ -56,7 +58,7 @@ class Section {
   );
 
   final String id;
-  final String title;
+  final LocalizedText title;
   final List<Lesson> lessons;
 }
 
@@ -70,13 +72,13 @@ class Lesson {
 
   factory Lesson.fromJson(Map<String, dynamic> json) => Lesson(
     id: json['id'] as String,
-    title: json['title'] as String,
+    title: LocalizedText.fromJson(json['title']),
     duration: Duration(seconds: (json['durationSec'] as num?)?.toInt() ?? 0),
     video: json['video'] as String,
   );
 
   final String id;
-  final String title;
+  final LocalizedText title;
 
   /// Display length from the catalog. Completion uses the real video length.
   final Duration duration;

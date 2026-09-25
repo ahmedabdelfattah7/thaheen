@@ -22,6 +22,7 @@ class CourseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final lang = l10n.localeName;
     final theme = Theme.of(context);
     final locale = Localizations.localeOf(context).toLanguageTag();
 
@@ -40,10 +41,13 @@ class CourseCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(course.title, style: theme.textTheme.titleMedium),
+                  Text(
+                    course.title.of(lang),
+                    style: theme.textTheme.titleMedium,
+                  ),
                   const SizedBox(height: 4),
                   Text(
-                    '${bidiIsolate(course.instructor)} · '
+                    '${bidiIsolate(course.instructor.of(lang))} · '
                     '${l10n.lessonsCount(course.lessons.length)}',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
